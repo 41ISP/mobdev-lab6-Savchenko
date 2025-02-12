@@ -16,10 +16,20 @@ export default function RootLayout() {
   const [word, setWord] = useState('')
   const [firstLang, setFirstLang] = useState('')
   const [secondLang, setSecondLang] = useState('')
-  
+  const [allLangs, setAllLangs] = useState<Lang[]>([])
+
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await YaAPI.fetchLanguages()
+      const langsSet = new Set(res.map((lang) => lang.split('-')).flat())
+      const parsedLangs = Array.from(langsSet).map((el) => { return { value: el, label: el } })
+      setAllLangs(parsedLangs)
+    }
+  }, [])
 
   useEffect(() => {
     if (loaded) {
@@ -34,23 +44,25 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={styles.mainContainer}>
-           <View style={styles.searchContainer}>
-            <Text style={styles.h1Container}>Dictionary API</Text>
-            <TextInput style={styles.inputContainer}
+        <View style={styles.searchContainer}>
+          <Text style={styles.h1Container}>Dictionary API</Text>
+          <TextInput style={styles.inputContainer}
             placeholder="Enter the word"
             value={word}
             onChangeText={setWord}
-            returnKeyType="done"/>
-            <Dropdown data={}/>
-            </View> 
+            returnKeyType="done" />
+          <Dropdown valueField={firstLang} onChange={(e) => {
+            console.log(e);
+          }} labelField={firstLang} data={allLangs} />
         </View>
+      </View>
     </ThemeProvider>
   );
 }
 
 const styles = StyleSheet.create({
   mainContainer: {
-        
+
   },
   searchContainer: {
 

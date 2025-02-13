@@ -7,6 +7,8 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { Text } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown'
+import DictionaryAPI from '@/shared/DictionaryAPI';
+import { ILangs } from '@/entities/langs.model';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -16,7 +18,7 @@ export default function RootLayout() {
   const [word, setWord] = useState('')
   const [firstLang, setFirstLang] = useState('')
   const [secondLang, setSecondLang] = useState('')
-  const [allLangs, setAllLangs] = useState<Lang[]>([])
+  const [allLangs, setAllLangs] = useState<ILangs[]>([])
 
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -24,7 +26,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await YaAPI.fetchLanguages()
+      const res = await DictionaryAPI.getLangs()
       const langsSet = new Set(res.map((lang) => lang.split('-')).flat())
       const parsedLangs = Array.from(langsSet).map((el) => { return { value: el, label: el } })
       setAllLangs(parsedLangs)
@@ -52,8 +54,10 @@ export default function RootLayout() {
             onChangeText={setWord}
             returnKeyType="done" />
           <Dropdown valueField={firstLang} onChange={(e) => {
-            console.log(e);
+            console.log((e));
+            
           }} labelField={firstLang} data={allLangs} />
+          <Dropdown data={allLangs} valueField={secondLang} labelField={secondLang} onChange={(e) => {}}/>
         </View>
       </View>
     </ThemeProvider>

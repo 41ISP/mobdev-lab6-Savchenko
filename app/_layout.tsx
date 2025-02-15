@@ -16,9 +16,9 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [word, setWord] = useState('')
-  const [firstLang, setFirstLang] = useState('')
-  const [secondLang, setSecondLang] = useState('')
   const [allLangs, setAllLangs] = useState<ILangs[]>([])
+  const [firstLang, setFirstLang] = useState(allLangs.values().find())
+  const [secondLang, setSecondLang] = useState('')
 
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -27,10 +27,13 @@ export default function RootLayout() {
   useEffect(() => {
     const fetchData = async () => {
       const res = await DictionaryAPI.getLangs()
-      const langsSet = new Set(res.map((lang) => lang.split('-')).flat())
-      const parsedLangs = Array.from(langsSet).map((el) => { return { value: el, label: el } })
-      setAllLangs(parsedLangs)
+      if (res) {
+        const langsSet = new Set(res.map((lang) => lang.split('-')).flat())
+        const parsedLangs = Array.from(langsSet).map((el) => { return { value: el, label: el } })
+        setAllLangs(parsedLangs)
+      }
     }
+    fetchData()
   }, [])
 
   useEffect(() => {
@@ -53,11 +56,9 @@ export default function RootLayout() {
             value={word}
             onChangeText={setWord}
             returnKeyType="done" />
-          <Dropdown valueField={firstLang} onChange={(e) => {
-            console.log((e));
-            
-          }} labelField={firstLang} data={allLangs} />
-          <Dropdown data={allLangs} valueField={secondLang} labelField={secondLang} onChange={(e) => {}}/>
+          <Dropdown valueField={firstLang} onChange={(e) => { }} labelField={firstLang} data={allLangs} />
+          <Dropdown data={allLangs} valueField={secondLang} labelField={secondLang} onChange={(e) => { }} />
+            <Text>{JSON.stringify(allLangs)}</Text>
         </View>
       </View>
     </ThemeProvider>

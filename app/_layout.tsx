@@ -17,7 +17,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [word, setWord] = useState('')
   const [allLangs, setAllLangs] = useState<ILangs[]>([])
-  const [firstLang, setFirstLang] = useState(allLangs.values().find())
+  const [firstLang, setFirstLang] = useState("")
   const [secondLang, setSecondLang] = useState('')
 
   const [loaded] = useFonts({
@@ -30,6 +30,7 @@ export default function RootLayout() {
       if (res) {
         const langsSet = new Set(res.map((lang) => lang.split('-')).flat())
         const parsedLangs = Array.from(langsSet).map((el) => { return { value: el, label: el } })
+        setFirstLang(Object.values(parsedLangs).find((el) => el.label === "ru")?.value || Object.values(parsedLangs)[0].value || "")
         setAllLangs(parsedLangs)
       }
     }
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
 
   },
   searchContainer: {
-
+    
   },
   inputContainer: {
 
